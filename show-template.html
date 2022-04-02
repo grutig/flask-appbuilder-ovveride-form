@@ -1,0 +1,24 @@
+{% set data = {} %}
+{% set label = {} %}
+{% if 'show' in widgets %}{% set widgs = widgets['show'] %}{% endif %}
+{% for item in widgs.template_args['include_columns'] %}
+    {% set id = loop.index-1 %}
+    {% set x = label.__setitem__(item, widgs.template_args['label_columns'][item]) %}
+    {% set x = data.__setitem__(item, widgs.template_args['value_columns'][id]) %}
+{% endfor %}
+<form method="post">
+  <div class='form-group'>
+    <label for='oggetto'>{{ label['oggetto'] }}</label>
+    <input type='text' class='form-control' id='oggetto' name='oggetto' value="{{ data['oggetto'] }}" readonly>
+  </div>
+  <div class='form-group'>
+     <label for="visibile" control-label>Visibile</label>
+     <input id="visibile" name="visibile" type="checkbox" value="y" {% if data['visibile'] %}checked{% endif %} readonly>
+  </div>
+  <div class='form-group'>
+     <label for="corpo" control-label>Visibile</label>
+     <div id="corpo">
+     {{ data['corpo'] | safe}}
+     </div>
+  </div>
+</form>
