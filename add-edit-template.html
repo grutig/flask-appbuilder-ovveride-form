@@ -1,0 +1,44 @@
+This example handles three fields (oggetto, visibile, corpo) in edit mode, two (oggetto, corpo) in add mode
+	
+{% set data = {} %}
+{% set label = {} %}
+{% if 'edit' in widgets %}{% set widgs = widgets['edit'] %}{% set add = False %}{% endif %}
+{% if 'add' in widgets %}{% set widgs = widgets['add'] %}{% set add = True %}{% endif %}
+{% for cname in widgs.template_args['include_cols'] %}
+    {% set id = loop.index-1 %}
+    {% set x = label.__setitem__(cname, widgs.template_args['form'][cname].label) %}
+    {% if add %}
+        {% set x = data.__setitem__(cname, "") %}
+    {% else %}
+        {% set x = data.__setitem__(cname, widgs.template_args['form'][cname].data) %}
+    {% endif %}
+{% endfor %}
+
+<form id="model_form" action="" method="post" enctype="multipart/form-data">
+   <input id="csrf_token" name="csrf_token" type="hidden" value="{{ widgs.template_args['form']['csrf_token']['current_token'] }}">
+   <div class='form-group'>
+       <label for="oggetto" control-label>{{ label['oggetto'] }}
+       <strong style="color: red">&#42;</strong></label>
+       <input type='text' class='form-control' id='oggetto' name='oggetto' required value="{{ data['oggetto'] }}"/>
+   </div>
+   <div class='form-group'>
+       <label for='summernote'>{{ label['corpo'] }}
+       <strong style="color: red">&#42;</strong></label>
+      <textarea id="summernote" name="corpo" required class='form-control'>{{ data['corpo'] }}</textarea>
+   </div>
+   {% if add == false %}
+     <div class='form-group'>
+        <label for="visibile" control-label>Visibile</label>
+        <input {% if data['visibile'] %}checked{% endif %} id="visibile" name="visibile" type="checkbox" value="y">
+      </div>
+   {% endif %}
+   <div class="well well-sm">
+       <button type="submit" class="btn  btn-sm btn-primary">Salva
+           <i class="fa fa-save"></i></button>
+       <a href="/back" class="btn btn-sm btn-default" data-toggle="tooltip" rel="tooltip"
+          title="Indietro">
+          <span class="sr-only">Indietro</span>
+          <i class="fa fa-arrow-left"></i>
+       </a>
+   </div>
+</form>
